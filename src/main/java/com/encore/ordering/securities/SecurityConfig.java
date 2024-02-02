@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .cors().and() //cors 활성화
                 .httpBasic().disable()
                 .authorizeRequests()
-                .antMatchers("/member/create","/doLogin","/items","/item/image/**")
+                .antMatchers("/member/create","/doLogin","/items","/item/*/image/")
                 /*로그아웃은 왜 필요가 없을까?
                 * <세션방식>
                 * doLogin -> 성공시 세션storage에 sessionId저장 + 세선id전달

@@ -39,6 +39,14 @@ public class Item {
     @UpdateTimestamp
     private LocalDateTime updatedTime;
 
+    public void updateItem(String name, String category, int price, int stockQuantity, String imagePath){
+        this.name = name;
+        this.category = category;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+        this.imagePath = imagePath;
+    }
+
     public void deleteItem(){
         this.delYn = "Y";
     }
