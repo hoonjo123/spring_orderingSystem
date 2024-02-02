@@ -4,9 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
-@AllArgsConstructor
 @Data
-public class ResponseDto {
+@AllArgsConstructor
+public class CommonResponse {
+    // 단건 create 했을 때, "ok" 주기 싫으니까 공통화
     private HttpStatus status;
     private String message;
     private Object result;
