@@ -10,14 +10,13 @@ import com.encore.ordering.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import static com.encore.ordering.member.dto.MemberResponseDto.toMemberResponseDto;
@@ -26,51 +25,40 @@ import static com.encore.ordering.member.dto.MemberResponseDto.toMemberResponseD
 @Transactional
 public class MemberService {
     private final MemberRepository memberRepository;
+    //Bean으로 만들어 놓은 PasswordEncoder 주입
     private final PasswordEncoder passwordEncoder;
-
     @Autowired
-
     public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-
-    public Member create(MemberCreateReqDto memberCreateReqDto) {
-        // Address 조립, 필수 입력이 아니라 null이 들어있을 수도 있음
-       memberCreateReqDto.setPassword(passwordEncoder.encode(memberCreateReqDto.getPassword()));
-       Member member = Member.toEntity(memberCreateReqDto);
-       return memberRepository.save(member);
-
-
+    public Member create(MemberCreateReqDto memberCreateReqDto){
+        memberCreateReqDto.setPassword(passwordEncoder.encode(memberCreateReqDto.getPassword()));
+        Member member = Member.toEntity(memberCreateReqDto);
+        return memberRepository.save(member);
     }
 
-
-        public MemberResponseDto findMyInfo() {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String email = authentication.getName();
-            Member member = memberRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
-            return toMemberResponseDto(member);
+    public MemberResponseDto findMyInfo(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        Member member = memberRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
+        return toMemberResponseDto(member);
     }
 
-        public List<MemberResponseDto> findAll(){
-            List<Member> members = memberRepository.findAll();
-            return members.stream().map(m-> toMemberResponseDto(m)).collect(Collectors.toList());
-        }
+    public List<MemberResponseDto> findAll(){
+        List<Member> members = memberRepository.findAll();
+        return members.stream().map(m -> MemberResponseDto.toMemberResponseDto(m)).collect(Collectors.toList());
+    }
 
-    public Member login(LoginReqDto loginReqDto) throws IllegalArgumentException {
-        //회원가입 여부(email존재여부, password여부)
-        Member member = memberRepository.findByEmail(loginReqDto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Email is not existed"));
+    public Member login(LoginReqDto loginReqDto) throws IllegalArgumentException{
+        //email 존재여부
+        Member member = memberRepository.findByEmail(loginReqDto.getEmail()).orElseThrow(()->new IllegalArgumentException("존재하지 않는 이메일입니다."));
+
         //password 일치여부
-        if (!passwordEncoder.matches(loginReqDto.getPassword(), member.getPassword())) {
-            throw new IllegalArgumentException("Password mismatch");
+        if(!passwordEncoder.matches(loginReqDto.getPassword(), member.getPassword())){
+            throw new IllegalArgumentException("비밀번호 불일치");
         }
         return member;
     }
-
-
-    //dto 공통화작업 시작
-
-
 }

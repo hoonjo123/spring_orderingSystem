@@ -1,35 +1,41 @@
 package com.encore.ordering.order.dto;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
+//@Data
+//public class OrderReqDto {
+//    private List<Long> itemIds;
+//    private List<Integer> counts;
+//}
+
+//예시데이터
+/*
+{
+   "itemIds" : [1, 2],
+   "counts" : [10, 20]     : 1번 아이템 10개, 2번 아이템 20개
+}
+
+ "itemIds" : [1, 2], "counts" : [10, 20, 30] 으로 넘어오는 경우에는 안됨
+ */
+
 @Data
 public class OrderReqDto {
-    private List<OrderItemDto> orderReqItemDtos;
+    private List<OrderReqItemDto> orderReqItemDtos;
     @Data
-    private static class OrderItemDto{
+    public static class OrderReqItemDto{
         private Long itemId;
         private int count;
     }
 }
 
-/* "orderReqItemDtos" : [
-{"itemId" : 1, "count" : 10}
-{"itemId" : 2, "count" : 20}
+//예시데이터
+/*
+{
+   "orderReqItemDtos" : [
+        {"itemId" : 1, "count" : 10},
+        {"itemId" : 2, "count" : 20}
+   ]
 }
-
  */
-
-
-
-//    private List<Long> itemIds;
-//    private List<Long> counts;
-//}
-/**==예시데이터==**
- * 지향하는 형식자체에는 맞지 않음.
- * {
- *   "itemIds" : [1,2], "counts" : [10,20]
- * }
- *  */

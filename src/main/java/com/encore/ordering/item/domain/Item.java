@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -26,12 +23,9 @@ public class Item {
     private String category;
     private int price;
     private int stockQuantity;
-
-    @Builder.Default
-    //builder는 기본값이 Null이기때문에 Default값을 따로 설정해주어야 한다.
-    private String delYn = "N";
-
     private String imagePath;
+    @Builder.Default
+    private String delYn="N";
 
     @CreationTimestamp
     private LocalDateTime createdTime;
@@ -39,16 +33,16 @@ public class Item {
     @UpdateTimestamp
     private LocalDateTime updatedTime;
 
+    public void deleteItem(){
+        this.delYn = "Y";
+    }
+
     public void updateItem(String name, String category, int price, int stockQuantity, String imagePath){
         this.name = name;
         this.category = category;
         this.price = price;
         this.stockQuantity = stockQuantity;
         this.imagePath = imagePath;
-    }
-
-    public void deleteItem(){
-        this.delYn = "Y";
     }
 
     //연산은 서비스 단에서 하고, Entity에는 의미 최소 기능에 충실하자.

@@ -1,12 +1,9 @@
 package com.encore.ordering.item.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
-
 public class ItemReqDto {
     private String name;
     private String category;

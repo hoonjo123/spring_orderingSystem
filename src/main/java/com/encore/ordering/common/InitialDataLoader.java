@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class InitialDataLoader implements CommandLineRunner {
-    //프로그램이 시작하자마자 동시에 admin계정 하나 만들도록
-    //CommandLineRunner를 통해 스프링빈으로 등록되는시점에 run메서드 실행
+    // CommandLineRunner를 통해 스프링 빈으로 등록되는 시점에 run 메서드 실행
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -22,13 +21,13 @@ public class InitialDataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if(memberRepository.findByEmail("admin@test.com").isEmpty()){
-            Member adminMember = Member.builder()
+            Member member = Member.builder()
                     .name("admin")
                     .email("admin@test.com")
                     .password(passwordEncoder.encode("1234"))
                     .role(Role.ADMIN)
                     .build();
-            memberRepository.save(adminMember);
+            memberRepository.save(member);
         }
     }
 }

@@ -7,13 +7,12 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 @Data
-
 public class LoginReqDto {
     @NotEmpty(message = "email is essential")
     @Email(message = "email is not valid")
     private String email;
 
     @NotEmpty(message = "password is essential")
-    @Size(min = 4, message = "password should be more than 4 characters")
+    @Size(min = 4, message = "minimum length is 4")
     private String password;
 }
