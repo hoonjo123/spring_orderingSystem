@@ -50,6 +50,7 @@ public class ItemController {
         // headers, status, body 순으로 오버라이딩 된 ResponseEntity 사용
         // 이전에는 계속 body, status 매개변수만 사용했음
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+
     }
 
     @PreAuthorize("hasRole('ADMIN')")
