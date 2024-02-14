@@ -17,6 +17,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.encore.ordering.member.dto.MemberResponseDto.toMemberResponseDto;
@@ -34,6 +35,10 @@ public class MemberService {
     }
 
     public Member create(MemberCreateReqDto memberCreateReqDto){
+        Optional<Member> member_check = memberRepository.findByEmail(memberCreateReqDto.getEmail());
+        if (member_check.isPresent()) {
+            throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+        }
         memberCreateReqDto.setPassword(passwordEncoder.encode(memberCreateReqDto.getPassword()));
         Member member = Member.toEntity(memberCreateReqDto);
         return memberRepository.save(member);

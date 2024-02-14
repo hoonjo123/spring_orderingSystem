@@ -1,10 +1,7 @@
 package com.encore.ordering.securities;
 
 import com.encore.ordering.common.ErrorResponseDto;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -59,13 +56,24 @@ public class JwtAuthFilter extends GenericFilter {
             }
             // filterChain에서 그 다음 filtering으로 넘어가도록 하는 메서드
             chain.doFilter(request, response);
-        }catch(AuthenticationServiceException e){
-            // Controller가 아니기 때문에 직접 만들어줘야 함.
-            // 이때, errorMessage 메서드를 ErrorResponseDto.java에 makeMessage메서드로 빼면서 공통화 했음
-            HttpServletResponse httpServletResponse = (HttpServletResponse)response;
+        } catch (SignatureException | ExpiredJwtException e) {
+            // JWT 검증 실패(서명 불일치, 만료 등)로 인한 예외 처리
+            HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+            httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+            httpServletResponse.setContentType("application/json");
+            httpServletResponse.getWriter().write(ErrorResponseDto.makeMessage(HttpStatus.UNAUTHORIZED, "Invalid or expired token").toString());
+        } catch (AuthenticationServiceException e) {
+            // 기존의 AuthenticationServiceException 처리
+            HttpServletResponse httpServletResponse = (HttpServletResponse) response;
             httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
             httpServletResponse.setContentType("application/json");
             httpServletResponse.getWriter().write(ErrorResponseDto.makeMessage(HttpStatus.UNAUTHORIZED, e.getMessage()).toString());
+        } catch (Exception e) {
+            // 기타 예외 처리 (500 Internal Server Error)
+            HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+            httpServletResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            httpServletResponse.setContentType("application/json");
+            httpServletResponse.getWriter().write(ErrorResponseDto.makeMessage(HttpStatus.INTERNAL_SERVER_ERROR, "An internal server error has occurred").toString());
         }
     }
 }
